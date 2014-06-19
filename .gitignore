@@ -1,2 +1,5 @@
 venv
 credentials.py
+*.pyc
+*~
+.DS_Store
