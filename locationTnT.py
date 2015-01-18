@@ -33,19 +33,11 @@ def process_tweet_loc(tweet, location=False):
 	# else:
 	# 	print tweet
 
-
-
 def process_ignored(raw_data):
 	global globalIgnoreFile
 	if globalIgnoreFile == None:
 		globalIgnoreFile = open("ignored.json", "a")
 	globalIgnoreFile.write(raw_data)
-
-
-
-
-
-
 
 #After Creating the basic Listener we can develop more complex functionality with the listener
 class MyLocationListener(StreamListener):
