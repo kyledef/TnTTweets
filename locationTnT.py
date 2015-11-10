@@ -2,36 +2,21 @@ import tweepy
 from tweepy import Stream
 from tweepy.streaming import StreamListener
 from common import *
+import six
+import json
 
 globalFile = None
 globalIgnoreFile = None
 
-
-
 # develop a process tweet to make dealing with acquired tweets consistent
 def process_tweet_loc(tweet, location=False):
 	global globalFile
-	
-	if location:
-		if tweet.geo:
-			print tweet.geo
-		else:
-			print "no location found"
-
-		if tweet.place:
-			print tweet.place.name
-			print tweet.place.country_code
-			print tweet.place.country
-		else:
-			print "no place info found"
-
-	if globalFile:
-		if isinstance(tweet, six.string_types):
-			globalFile.write(tweet)
-		else:
-			globalFile.write(getattr(tweet, "_json"))
-	# else:
-	# 	print tweet
+	if tweet.place:
+		if tweet.place.country_code == "TT":
+			print "Place: "+tweet.place.name+" Code: " + tweet.place.country_code + " Country: " + tweet.place.country
+			print "Text: " + tweet.text
+			print tweet.user.screen_name + " has " + str(tweet.user.followers_count) + " friends"
+			globalFile.write(json.dumps(getattr(tweet, "_json")) + "\n")
 
 def process_ignored(raw_data):
 	global globalIgnoreFile
@@ -58,28 +43,30 @@ class MyLocationListener(StreamListener):
 		
 
 	def on_status(self, status):
-		print "received status"
+		# print "received status"
 		process_tweet_loc(status, True)
 		return True
 		
 
 #peusdo main function
 def runner():
-	trinbago_loc="-86.000 10.000 -60.500 21.000"
+	trinbago_loc="-61.560 10.200 -60.300 11.120"
 	global globalFile
 	loc = []
 	for l in trinbago_loc.split():
 		loc.append(float(l))
 
 	auth = getAuthentication()
-	# globalFile = open("result.json", "a")
+	globalFile = open("result.json", "a")
 	if auth:	
 		# api = tweepy.API(auth)
 		# m_listener =  MyListener()
 		m_listener =  MyLocationListener()
 		m_streamer = Stream(auth,m_listener)
 		m_streamer.filter(locations=loc)
+
 		# m_streamer.sample() #Will access the twitter public streaming api via the sample method
 
-#Run program
-runner()
+if __name__ == "__main__":
+	#Run program
+	runner()
