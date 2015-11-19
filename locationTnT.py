@@ -13,7 +13,7 @@ def process_tweet_loc(tweet, location=False):
 	global globalFile
 	if tweet.place:
 		if tweet.place.country_code == "TT":
-			print "Place: "+tweet.place.name+" Code: " + tweet.place.country_code + " Country: " + tweet.place.country
+			# print "Place: "+tweet.place.name+" Code: " + tweet.place.country_code + " Country: " + tweet.place.country
 			print "Text: " + tweet.text
 			print tweet.user.screen_name + " has " + str(tweet.user.followers_count) + " friends"
 			globalFile.write(json.dumps(getattr(tweet, "_json")) + "\n")
@@ -62,8 +62,12 @@ def runner():
 		# api = tweepy.API(auth)
 		# m_listener =  MyListener()
 		m_listener =  MyLocationListener()
-		m_streamer = Stream(auth,m_listener)
-		m_streamer.filter(locations=loc)
+		while True:
+			try:
+				m_streamer = Stream(auth,m_listener)
+				m_streamer.filter(locations=loc)
+			except:
+				continue
 
 		# m_streamer.sample() #Will access the twitter public streaming api via the sample method
 
